@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:product_catalog/features/Models/product.dart';
+import 'package:product_catalog/config/items/app_colors.dart';
+import 'package:product_catalog/config/routes/route_name.dart';
+import 'package:product_catalog/providers/products_provider/product.dart';
 import 'package:product_catalog/features/Widgets/gridProductItem.dart';
-import 'package:product_catalog/providers/productsProvider.dart';
+import 'package:product_catalog/providers/products_provider/productsProvider.dart';
 import 'package:provider/provider.dart';
 
-class MainShoppingScreen extends StatelessWidget {
+class MainShoppingScreen extends StatefulWidget {
   MainShoppingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MainShoppingScreen> createState() => _MainShoppingScreenState();
+}
+
+class _MainShoppingScreenState extends State<MainShoppingScreen> {
+  bool showFav = false;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(
-        title: Text('Product Catalog'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                // _showAddProductDialog(context);
-                final productsProvider =
-                    Provider.of<Products>(context, listen: false);
-                productsProvider.addProduct();
-              }),
-        ],
+      backgroundColor: Colors.grey[200],
+      appBar: buildAppBar(context),
+      body: ProductsGrid(
+        isFav: showFav,
       ),
-      body: ProductsGrid(),
     ));
   }
 
@@ -94,34 +93,124 @@ class MainShoppingScreen extends StatelessWidget {
           );
         });
   }
+
+  List<PopupMenuEntry<int>> buildPopupButtons() {
+    return [
+      PopupMenuItem(
+        value: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Filter By Favorite',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Icon(
+              Icons.favorite,
+              color: AppColors.whiteColor,
+            ),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 1,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Remove Filters',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Icon(
+              Icons.remove_circle_outline,
+              color: AppColors.whiteColor,
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+
+  PreferredSizeWidget buildAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight),
+      child: ClipRRect(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(30),
+        ),
+        child: AppBar(
+          title: Text('Product Catalog'),
+          centerTitle: true,
+          actions: [
+            PopupMenuButton<int>(
+              onSelected: (int selectedValue) {
+                setState(() {
+                  if (selectedValue == 0) {
+                    showFav = true;
+                  } else if (selectedValue == 1) {
+                    showFav = false;
+                  }
+                });
+              },
+              itemBuilder: (_) => buildPopupButtons(),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+              color: AppColors.darkRed,
+              icon: Icon(Icons.more_vert, color: Colors.white),
+            ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                final productsProvider =
+                    Provider.of<Products>(context, listen: false);
+                productsProvider.addProduct();
+              },
+            ),
+            IconButton(onPressed: (){
+              Navigator.pushNamed(context, RouteNames.cart);
+            }, icon:Icon( Icons.shopping_cart_checkout))
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class ProductsGrid extends StatelessWidget {
-  const ProductsGrid({
-    super.key,
-  });
-
+  const ProductsGrid({super.key, required this.isFav});
+  final bool isFav;
   @override
   Widget build(BuildContext context) {
     final productData = Provider.of<Products>(context);
-    final availProducts = productData.availProducts;
+    // final availProducts = productData.availProducts;
+    final availProducts =
+        isFav ? productData.favoriteProducts : productData.availProducts;
 
     return GridView.builder(
       padding: EdgeInsets.all(10),
       itemCount: availProducts.length,
       // itemBuilder: (context, index) {
       //   return ChangeNotifierProvider<Product>(
-      //     create: (BuildContext context) { 
+      //     create: (BuildContext context) {
       //       return availProducts[index];
       //      },
       //     child: GridProductItem(
       //         // id: availProducts[index].id,
       //         // title: availProducts[index].title,
       //         // image: availProducts[index].image),
-        
+
       //    ) );
       // },
-       itemBuilder: (context, index) {
+      itemBuilder: (context, index) {
         return ChangeNotifierProvider.value(
           value: availProducts[index], // Using .value for existing objects
           child: GridProductItem(),

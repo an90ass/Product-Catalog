@@ -12,4 +12,6 @@ class AppColors {
   static const Color warningColor = Color(0xFFFFC107); // Amber (for warning)
   static const Color infoColor = Color(0xFF64DD17);    // Bright Lime Green for Info
   static final Color black53 = Colors.black.withOpacity(0.53);  // Black with 53% opacity
+static const Color darkRed = Color(0xFF8B0000);
+static const Color whiteColor = Colors.white;
 }

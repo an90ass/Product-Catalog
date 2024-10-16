@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../features/Models/product.dart';
+import 'product.dart';
 
 class Products extends ChangeNotifier{
 
@@ -41,12 +41,15 @@ class Products extends ChangeNotifier{
  List<Product> get availProducts => _availProducts;
  void addProduct(){
   final product=   Product(
-        id: '1005',
-        title: 'oneplus',
+        id: '1007',
+        title: 'name',
         description: "it's a phone",
         image: 'assets/images/oneplus.jpeg',
         price: 1000);
   _availProducts.add(product);
   notifyListeners();
+ }
+ List<Product> get favoriteProducts{
+  return _availProducts.where((product) => product.isFavorite).toList();
  }
 }

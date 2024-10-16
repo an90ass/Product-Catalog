@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_catalog/config/routes/route_name.dart';
 
+import '../../features/Screens/cartScreen.dart';
 import '../../features/Screens/productDetailsScreen.dart';
 import '../../main.dart';
 
@@ -14,6 +15,8 @@ class AppRouter {
           builder: (context) => ProductDetailsScreen(),
           settings: RouteSettings(arguments: productId), // Pass the ID
         );
+        case RouteNames.cart:
+        return MaterialPageRoute(builder: (context) => CartScreen());
       default:
         return MaterialPageRoute(builder: (_) => MyApp());
     }
