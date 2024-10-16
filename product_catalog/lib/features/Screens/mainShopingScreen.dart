@@ -147,6 +147,7 @@ class _MainShoppingScreenState extends State<MainShoppingScreen> {
           bottom: Radius.circular(30),
         ),
         child: AppBar(
+          backgroundColor: AppColors.darkRed,
           title: Text('Product Catalog'),
           centerTitle: true,
           actions: [

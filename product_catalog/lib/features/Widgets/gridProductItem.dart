@@ -50,7 +50,7 @@ class GridProductItem extends StatelessWidget {
                 }),
             trailing:
                 IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {
-                  cart.addItem(productId: product.id,price: product.price,title: product.title);
+                  cart.addItem(productId: product.id,price: product.price,title: product.title,image: product.image);
                 }),
           ),
         ),
